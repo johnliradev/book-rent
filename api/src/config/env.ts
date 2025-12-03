@@ -7,6 +7,7 @@ const _env = z.object({
     .min(1, ".env is invalid: PORT not defined")
     .transform(Number),
   HOST: z.string().default("0.0.0.0"),
+  DATABASE_URL: z.string().min(1, ".env is invalid: DATABASE_URL not defined"),
 });
 
 function validateEnv() {
