@@ -3,6 +3,7 @@ import { fastifyCors } from "@fastify/cors";
 import {
   serializerCompiler,
   validatorCompiler,
+  jsonSchemaTransform,
   type ZodTypeProvider,
 } from "fastify-type-provider-zod";
 import { fastifySwagger } from "@fastify/swagger";
@@ -24,18 +25,17 @@ async function registerPlugins(server: FastifyInstance) {
     allowedHeaders: ["Content-Type", "Authorization"],
   });
   await server.register(fastifySwagger, {
-    swagger: {
+    openapi: {
       info: {
         title: "Book Rent",
         description: "API for book rent",
         version: "1.0.0",
       },
     },
+    transform: jsonSchemaTransform,
   });
   await server.register(Router, { prefix: "/api" });
-  await server.register(scalarApiReference, {
-    routePrefix: "/api/docs",
-  });
+  await server.register(scalarApiReference, { routePrefix: "/api/docs" });
 }
 
 export const buildServer = async () => {
