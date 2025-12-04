@@ -1,13 +1,11 @@
-import "dotenv/config";
 import z, { treeifyError } from "zod";
 
 const _env = z.object({
-  PORT: z
-    .string()
-    .min(1, ".env is invalid: PORT not defined")
-    .transform(Number),
+  PORT: z.coerce.number().min(1, ".env is invalid: PORT not defined"),
   HOST: z.string().default("0.0.0.0"),
-  DATABASE_URL: z.string().min(1, ".env is invalid: DATABASE_URL not defined"),
+  DATABASE_URL: z
+    .url("Invalid URL")
+    .min(1, ".env is invalid: DATABASE_URL not defined"),
 });
 
 function validateEnv() {

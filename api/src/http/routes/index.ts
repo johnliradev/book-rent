@@ -17,6 +17,9 @@ export const Router = async (app: FastifyInstance) => {
       },
     },
     (request: FastifyRequest, reply: FastifyReply) =>
-      reply.send({ status: "ok", timestamp: new Date().toISOString() })
+      reply.send({
+        status: "OK",
+        timestamp: new Date().toISOString(),
+      })
   );
 };
