@@ -14,7 +14,14 @@ datasource db {
 }
 
 model User {
+  @@map("users")
   id    Int    @id @default(autoincrement())
   email String @unique
   name  String?
+  password_hash String
+  createdAt DateTime @default(now())
+  
+  // Indexes for faster queries
+  // O index acelera a busca por email
+  @@index([email])
 }
