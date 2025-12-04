@@ -1,11 +1,23 @@
 import { FastifyError, FastifyReply, FastifyRequest } from "fastify";
 import { AppError } from "./AppError";
+import { hasZodFastifySchemaValidationErrors } from "fastify-type-provider-zod";
 
 export function errorHandler(
   error: FastifyError,
   request: FastifyRequest,
   reply: FastifyReply
 ) {
+  // Se o erro for uma validação de schema do Zod
+  // If the error is a Zod schema validation
+  if (hasZodFastifySchemaValidationErrors(error)) {
+    reply.status(400).send({
+      statusCode: 400,
+      error: "VALIDATION_ERROR",
+      message: "Validation failed",
+      issues: error.validation.map((issue) => issue.message),
+    });
+    return;
+  }
   // Se o erro for uma instância de AppError (erro customizado)
   // if it is an instance of AppError (custom error)
   if (error instanceof AppError) {
