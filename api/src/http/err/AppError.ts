@@ -34,3 +34,8 @@ export class UnauthorizedError extends AppError {
     super(message, 401, "UNAUTHORIZED");
   }
 }
+export class ConflictError extends AppError {
+  constructor(resource: string = "Resource") {
+    super(`${resource} already exists`, 409, "CONFLICT");
+  }
+}
