@@ -1,6 +1,10 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
+<<<<<<< HEAD
 import { registerUserController } from "./auth.controllers";
+=======
+import { registerUserController } from "./auth.controller";
+>>>>>>> 2b79af3c0fab79d84447479b0c2990fb62fa184f
 
 export const AuthRoutes = async (app: FastifyInstance) => {
   app.post(
@@ -26,7 +30,12 @@ export const AuthRoutes = async (app: FastifyInstance) => {
         },
       },
     },
+<<<<<<< HEAD
     async (request: FastifyRequest, reply: FastifyReply) =>
       await registerUserController(request, reply)
+=======
+    (request: FastifyRequest, reply: FastifyReply) =>
+      registerUserController(request, reply)
+>>>>>>> 2b79af3c0fab79d84447479b0c2990fb62fa184f
   );
 };
