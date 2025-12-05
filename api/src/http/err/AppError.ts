@@ -39,3 +39,8 @@ export class ConflictError extends AppError {
     super(`${resource} already exists`, 409, "CONFLICT");
   }
 }
+export class ForbiddenError extends AppError {
+  constructor(message: string = "Forbidden") {
+    super(message, 403, "FORBIDDEN");
+  }
+}
