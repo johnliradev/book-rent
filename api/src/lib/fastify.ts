@@ -10,6 +10,8 @@ import { fastifySwagger } from "@fastify/swagger";
 import scalarApiReference from "@scalar/fastify-api-reference";
 import { Router } from "../http/routes";
 import { errorHandler } from "../http/err/error-handler";
+import fastifyJwt from "@fastify/jwt";
+import { env } from "../config/env";
 
 export const server = fastify({
   logger: true,
@@ -35,6 +37,12 @@ async function registerPlugins(server: FastifyInstance) {
     transform: jsonSchemaTransform,
   });
   await server.register(Router, { prefix: "/api" });
+  await server.register(fastifyJwt, {
+    secret: env.JWT_SECRET,
+    sign: {
+      expiresIn: "1h",
+    },
+  });
   await server.register(scalarApiReference, { routePrefix: "/api/docs" });
 }
 

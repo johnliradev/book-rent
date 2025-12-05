@@ -24,6 +24,7 @@ services:
       HOST: 0.0.0.0
       PORT: 3000
       CHOKIDAR_USEPOLLING: "true"
+      JWT_SECRET: "supersecret"
     depends_on:
       - db
 

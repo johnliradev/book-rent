@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { registerUserController } from "./auth.controllers";
+import { loginController, registerUserController } from "./auth.controllers";
 
 export const AuthRoutes = async (app: FastifyInstance) => {
   app.post(
@@ -28,5 +28,33 @@ export const AuthRoutes = async (app: FastifyInstance) => {
     },
     async (request: FastifyRequest, reply: FastifyReply) =>
       await registerUserController(request, reply)
+  );
+  app.post(
+    "/login",
+    {
+      schema: {
+        description: "Login a user",
+        tags: ["Auth"],
+        body: z.object({
+          email: z.email("invalid email").min(1, "Email is required"),
+          password: z
+            .string("Password is required")
+            .min(1, "Password is required"),
+        }),
+        response: {
+          200: z.object({
+            message: z.string().default("Login successful"),
+            token: z.string(),
+            user: z.object({
+              id: z.number(),
+              name: z.string().nullable(),
+              email: z.string(),
+            }),
+          }),
+        },
+      },
+    },
+    async (request: FastifyRequest, reply: FastifyReply) =>
+      await loginController(request, reply)
   );
 };

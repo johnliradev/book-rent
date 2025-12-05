@@ -6,6 +6,7 @@ const _env = z.object({
   DATABASE_URL: z
     .url("Invalid URL")
     .min(1, ".env is invalid: DATABASE_URL not defined"),
+  JWT_SECRET: z.string().min(1, ".env is invalid: JWT_SECRET not defined"),
 });
 
 function validateEnv() {
