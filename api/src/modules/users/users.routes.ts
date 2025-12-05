@@ -7,6 +7,8 @@ import {
   deleteUserController,
   updateUserController,
 } from "./users.controllers";
+import { authenticate } from "../../http/middlewares/authenticate";
+import { authorizeOwner } from "../../http/middlewares/authorize-orwner";
 
 export const UsersRoutes = async (app: FastifyInstance) => {
   app.get(
@@ -92,10 +94,14 @@ export const UsersRoutes = async (app: FastifyInstance) => {
         params: z.object({
           id: z.coerce.number(),
         }),
+        headers: z.object({
+          authorization: z.string().min(1, "Token is required"),
+        }),
         response: {
           204: z.null(),
         },
       },
+      preHandler: [authenticate, authorizeOwner],
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
       return await deleteUserController(request, reply);
@@ -115,6 +121,9 @@ export const UsersRoutes = async (app: FastifyInstance) => {
           name: z.string().min(3).optional(),
           email: z.email().optional(),
         }),
+        headers: z.object({
+          authorization: z.string().min(1, "Token is required"),
+        }),
         response: {
           200: z.object({
             user: z.object({
@@ -126,6 +135,7 @@ export const UsersRoutes = async (app: FastifyInstance) => {
           }),
         },
       },
+      preHandler: [authenticate, authorizeOwner],
     },
     async (request: FastifyRequest) => {
       return await updateUserController(request);

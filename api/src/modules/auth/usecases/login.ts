@@ -1,10 +1,10 @@
 import { ValidationError } from "../../../http/err/AppError";
-import { findUserByEmail } from "../../users/usecases/find-user-by-email";
 import bcrypt from "bcryptjs";
 import { server } from "../../../lib/fastify";
+import { prisma } from "../../../lib/prisma";
 
 export const login = async (email: string, password: string) => {
-  const user = await findUserByEmail(email);
+  const user = await prisma.user.findUnique({ where: { email } });
   if (!user) {
     throw new ValidationError("Invalid email or password");
   }
