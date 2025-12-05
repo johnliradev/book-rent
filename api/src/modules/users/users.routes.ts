@@ -4,6 +4,8 @@ import {
   getAllUsersController,
   getUserByIdController,
   getUserByEmailController,
+  deleteUserController,
+  updateUserController,
 } from "./users.controllers";
 
 export const UsersRoutes = async (app: FastifyInstance) => {
@@ -78,6 +80,55 @@ export const UsersRoutes = async (app: FastifyInstance) => {
     },
     async (request: FastifyRequest) => {
       return await getUserByEmailController(request);
+    }
+  );
+
+  app.delete(
+    "/:id",
+    {
+      schema: {
+        description: "Delete user by id",
+        tags: ["Users"],
+        params: z.object({
+          id: z.coerce.number(),
+        }),
+        response: {
+          204: z.null(),
+        },
+      },
+    },
+    async (request: FastifyRequest, reply: FastifyReply) => {
+      return await deleteUserController(request, reply);
+    }
+  );
+
+  app.put(
+    "/:id",
+    {
+      schema: {
+        description: "Update user by id",
+        tags: ["Users"],
+        params: z.object({
+          id: z.coerce.number(),
+        }),
+        body: z.object({
+          name: z.string().min(3).optional(),
+          email: z.email().optional(),
+        }),
+        response: {
+          200: z.object({
+            user: z.object({
+              id: z.number(),
+              name: z.string().nullable(),
+              email: z.string(),
+              createdAt: z.coerce.string(),
+            }),
+          }),
+        },
+      },
+    },
+    async (request: FastifyRequest) => {
+      return await updateUserController(request);
     }
   );
 };
