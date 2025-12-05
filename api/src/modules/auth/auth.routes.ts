@@ -26,7 +26,7 @@ export const AuthRoutes = async (app: FastifyInstance) => {
         },
       },
     },
-    (request: FastifyRequest, reply: FastifyReply) =>
-      registerUserController(request, reply)
+    async (request: FastifyRequest, reply: FastifyReply) =>
+      await registerUserController(request, reply)
   );
 };
