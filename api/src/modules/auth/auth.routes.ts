@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { registerUserController } from "./auth.controller";
+import { registerUserController } from "./auth.controllers";
 
 export const AuthRoutes = async (app: FastifyInstance) => {
   app.post(
