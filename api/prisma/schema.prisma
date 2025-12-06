@@ -13,6 +13,11 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
 model User {
   @@map("users")
   id    Int    @id @default(autoincrement())
@@ -20,7 +25,7 @@ model User {
   name  String?
   password_hash String
   createdAt DateTime @default(now())
-  
+  role Role @default(USER)
   // Indexes for faster queries
   // O index acelera a busca por email
   @@index([email])
