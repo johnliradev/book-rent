@@ -20,6 +20,7 @@ export const updateUser = async (id: number, data: UpdateUserData) => {
       id: true,
       name: true,
       email: true,
+      role: true,
       createdAt: true,
       // Não retornar o campo senha
     },

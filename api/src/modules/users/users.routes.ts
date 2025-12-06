@@ -8,7 +8,8 @@ import {
   updateUserController,
 } from "./users.controllers";
 import { authenticate } from "../../http/middlewares/authenticate";
-import { authorizeOwner } from "../../http/middlewares/authorize-orwner";
+import { authorizeOwner } from "../../http/middlewares/authorize-owner";
+import { authorizeAdmin } from "../../http/middlewares/authorize-admin";
 
 export const UsersRoutes = async (app: FastifyInstance) => {
   app.get(
@@ -17,6 +18,12 @@ export const UsersRoutes = async (app: FastifyInstance) => {
       schema: {
         description: "Get all users",
         tags: ["Users"],
+        headers: z.object({
+          authorization: z
+            .string()
+            .min(1, "Token is required")
+            .startsWith("Bearer "),
+        }),
         response: {
           200: z.object({
             users: z.array(
@@ -24,12 +31,14 @@ export const UsersRoutes = async (app: FastifyInstance) => {
                 id: z.number(),
                 name: z.string().nullable(),
                 email: z.string(),
+                role: z.enum(["USER", "ADMIN"]),
                 createdAt: z.coerce.string(),
               })
             ),
           }),
         },
       },
+      preHandler: [authenticate, authorizeAdmin],
     },
     async (request: FastifyRequest) => await getAllUsersController(request)
   );
@@ -39,6 +48,12 @@ export const UsersRoutes = async (app: FastifyInstance) => {
       schema: {
         description: "Get user by id",
         tags: ["Users"],
+        headers: z.object({
+          authorization: z
+            .string()
+            .min(1, "Token is required")
+            .startsWith("Bearer "),
+        }),
         params: z.object({
           id: z.coerce.number(),
         }),
@@ -48,23 +63,30 @@ export const UsersRoutes = async (app: FastifyInstance) => {
               id: z.number(),
               name: z.string().nullable(),
               email: z.string(),
+              role: z.enum(["USER", "ADMIN"]),
               createdAt: z.coerce.string(),
             }),
           }),
         },
       },
+      preHandler: [authenticate, authorizeAdmin],
     },
     async (request: FastifyRequest) => {
       return await getUserByIdController(request);
     }
   );
-
   app.get(
     "/email",
     {
       schema: {
         description: "Get user by email",
         tags: ["Users"],
+        headers: z.object({
+          authorization: z
+            .string()
+            .min(1, "Token is required")
+            .startsWith("Bearer "),
+        }),
         querystring: z.object({
           email: z.email("Invalid email"),
         }),
@@ -74,17 +96,18 @@ export const UsersRoutes = async (app: FastifyInstance) => {
               id: z.number(),
               name: z.string().nullable(),
               email: z.string(),
+              role: z.enum(["USER", "ADMIN"]),
               createdAt: z.coerce.string(),
             }),
           }),
         },
       },
+      preHandler: [authenticate, authorizeAdmin],
     },
     async (request: FastifyRequest) => {
       return await getUserByEmailController(request);
     }
   );
-
   app.delete(
     "/:id",
     {
@@ -95,19 +118,21 @@ export const UsersRoutes = async (app: FastifyInstance) => {
           id: z.coerce.number(),
         }),
         headers: z.object({
-          authorization: z.string().min(1, "Token is required"),
+          authorization: z
+            .string()
+            .min(1, "Token is required")
+            .startsWith("Bearer "),
         }),
         response: {
           204: z.null(),
         },
       },
-      preHandler: [authenticate, authorizeOwner],
+      preHandler: [authenticate, authorizeAdmin],
     },
     async (request: FastifyRequest, reply: FastifyReply) => {
       return await deleteUserController(request, reply);
     }
   );
-
   app.put(
     "/:id",
     {
@@ -122,7 +147,10 @@ export const UsersRoutes = async (app: FastifyInstance) => {
           email: z.email().optional(),
         }),
         headers: z.object({
-          authorization: z.string().min(1, "Token is required"),
+          authorization: z
+            .string()
+            .min(1, "Token is required")
+            .startsWith("Bearer "),
         }),
         response: {
           200: z.object({
@@ -130,6 +158,7 @@ export const UsersRoutes = async (app: FastifyInstance) => {
               id: z.number(),
               name: z.string().nullable(),
               email: z.string(),
+              role: z.enum(["USER", "ADMIN"]),
               createdAt: z.coerce.string(),
             }),
           }),
