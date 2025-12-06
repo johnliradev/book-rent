@@ -1,6 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { z } from "zod";
 import { loginController, registerUserController } from "./auth.controllers";
+import { Role as RoleEnum } from "../../../generated/prisma/enums";
 
 export const AuthRoutes = async (app: FastifyInstance) => {
   app.post(
@@ -9,15 +10,21 @@ export const AuthRoutes = async (app: FastifyInstance) => {
       schema: {
         description: "Register a new user",
         tags: ["Auth"],
-        body: z.object({
-          name: z
-            .string("Name is required")
-            .min(3, "Name must be at least 3 characters long"),
-          email: z.email("invalid email").min(1, "Email is required"),
-          password: z
-            .string("Password is required")
-            .min(8, "Password must be at least 8 characters long"),
-        }),
+        body: z
+          .object({
+            name: z
+              .string("Name is required")
+              .min(3, "Name must be at least 3 characters long"),
+            email: z.email("invalid email").min(1, "Email is required"),
+            password: z
+              .string("Password is required")
+              .min(8, "Password must be at least 8 characters long"),
+            role: z.enum(["USER", "ADMIN"]),
+          })
+          .refine((data) => data.role === "USER" || data.role === "ADMIN", {
+            message: "Invalid role",
+            path: ["role"],
+          }),
         response: {
           200: z.object({
             message: z.string().default("User registered successfully"),
@@ -49,6 +56,7 @@ export const AuthRoutes = async (app: FastifyInstance) => {
               id: z.number(),
               name: z.string().nullable(),
               email: z.string(),
+              role: z.enum(["USER", "ADMIN"]),
             }),
           }),
         },

@@ -1,17 +1,19 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import { registerUser } from "./usecases/register-user";
 import { login } from "./usecases/login";
+import { Role as RoleEnum } from "../../../generated/prisma/enums";
 
 export const registerUserController = async (
   request: FastifyRequest,
   reply: FastifyReply
 ) => {
-  const { name, email, password } = request.body as {
+  const { name, email, password, role } = request.body as {
     name: string;
     email: string;
     password: string;
+    role: RoleEnum;
   };
-  const userId = await registerUser(name, email, password);
+  const userId = await registerUser(name, email, password, role);
   return reply.status(201).send({
     message: "User registered successfully",
     userId,

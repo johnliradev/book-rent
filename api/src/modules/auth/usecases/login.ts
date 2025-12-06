@@ -12,6 +12,9 @@ export const login = async (email: string, password: string) => {
   if (!passwordMatch) {
     throw new ValidationError("Invalid email or password");
   }
-  const token = await server.jwt.sign({ userId: user.id });
-  return { token, user: { id: user.id, name: user.name, email: user.email } };
+  const token = await server.jwt.sign({ userId: user.id, role: user.role });
+  return {
+    token,
+    user: { id: user.id, name: user.name, email: user.email, role: user.role },
+  };
 };
